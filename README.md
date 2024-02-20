@@ -1,6 +1,6 @@
-<div style="text-align: center;">
-  <img src="https://www.svgrepo.com/show/283953/tetris.svg" alt="Tetris Logo" width="200" height="200">
-</div>
+<p align="center">
+  <img src="https://www.svgrepo.com/show/283953/tetris.svg" alt="Tetris Logo" width="100" height="100" style="margin: auto;">
+</p>
 
 # Tetris Game
 
