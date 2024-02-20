@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Tetris</title>
+    <link rel="icon" href="https://www.svgrepo.com/show/283953/tetris.svg" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+  </head>
+
+  <body>
+    <div id="game-container">
+      <h1>Tetris Game</h1>
+      <style>
+        body {
+          margin: 0;
+          padding: 0;
+          min-height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        canvas {
+          filter: drop-shadow(5px 5px 2px rgba(0, 0, 0, 0.4));
+        }
+
+        #game-container {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+          margin-left: 20%;
+          font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+            Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
+            sans-serif;
+        }
+
+        h1 {
+          font-size: 40px;
+          margin-top: -10px;
+          color: rgb(227, 227, 227);
+          text-shadow: rgb(143, 143, 143) 0px 2px 5px;
+        }
+
+        #startButton {
+          font-size: 20px;
+          padding: 10px;
+          cursor: pointer;
+          color: rgb(227, 227, 227);
+          font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+            Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
+            sans-serif;
+          font-weight: 500;
+          border-radius: 10px;
+          border: none;
+          box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4);
+          background: linear-gradient(to right, #f6c4a4, #f27788, #c266be);
+          transition: all 0.5s;
+        }
+
+        #startButton:hover {
+          background: linear-gradient(to right, #c266be, #f27788, #f6c4a4);
+        }
+
+        #startButton:hover span {
+          padding-right: 25px;
+        }
+
+        #startButton span {
+          cursor: pointer;
+          display: inline-block;
+          position: relative;
+          transition: 0.5s;
+        }
+
+        #startButton span:after {
+          content: '\00bb';
+          position: absolute;
+          opacity: 0;
+          top: 0;
+          right: -20px;
+          transition: 0.5s;
+        }
+        #startButton:hover span:after {
+          opacity: 1;
+          right: 0;
+        }
+      </style>
+
+      <button id="startButton" style="vertical-align: middle">
+        <span>Start Game</span>
+      </button>
+      <script src="Board.js"></script>
+      <script src="Tetromino.js"></script>
+      <script>
+        const BOARD_MARGIN = 10
+        let key_speed_regulator = 0
+        let fall_regulator = 0
+        let key_speed_regulator_limit = 100
+
+        let audio
+
+        window.onload = function () {
+          audio = new window.Audio('./public/start.mp3')
+          audio.volume = 0.1
+          audio.loop = true
+          audio.play()
+        }
+
+        console.log('Audio', audio)
+        let currentAudioSrc = ''
+
+        function loadLevelMusic(level) {
+          let audioSrc
+
+          switch (true) {
+            case level >= 1 && level <= 5:
+              audioSrc = './public/tetris.mp3'
+              break
+            case level >= 6 && level <= 10:
+              audioSrc = './public/level5.mp3'
+              break
+            case level >= 11 && level <= 20:
+              audioSrc = './public/level10.mp3'
+              break
+            case level >= 21:
+              audioSrc = './public/danger.mp3'
+              break
+            default:
+              audioSrc = './public/tetris.mp3'
+          }
+
+          if (currentAudioSrc !== audioSrc) {
+            if (!gameStarted) audioSrc = './public/start.mp3'
+            audio.src = audioSrc
+            audio.play()
+            currentAudioSrc = audioSrc
+          }
+        }
+
+        let done_lines = 0
+        let lines_per_level = 10
+        let current_level = 1
+        let fall_interval = 1000
+        let fallIntervalId
+        let gameStarted = false
+
+        let startButton = document.getElementById('startButton')
+        startButton.addEventListener('click', startGame)
+        let container = document.getElementById('game-container')
+
+        function startGame() {
+          startButton.style.display = 'none'
+          container.style.display = 'none'
+          gameStarted = true
+          setup()
+          loop()
+          loadLevelMusic(current_level)
+        }
+
+        /*
+        Dynamic background generation
+        */
+
+        let background_angle = Math.random() * 360
+        let background_tone = Math.random() * 360
+
+        setInterval(() => {
+          document.body.style.background = `linear-gradient(
+          ${background_angle}deg,
+          hsl(${background_tone},100%,50%),
+          hsl(${background_tone},100%,0%)
+          )`
+          background_angle += Math.random()
+          background_tone += Math.random()
+        }, 20)
+
+        /*
+        Difficulty making the pieces fall every certain amount of time, simulating some sort of gravity, this is easily done with a setInterval
+        */
+
+        setInterval(() => {
+          if (millis() - fall_regulator < 300) {
+            return
+          }
+          fall_regulator = millis()
+          tetromino.moveDown()
+        }, 500)
+
+        /* The setup function is native to p5.js and is used to adjust the initial properties of our objects and variables */
+
+        function setup() {
+          createCanvas(900, 600)
+          board = new Board()
+          createTetrominoBaseMapping()
+          tetromino = new Tetromino()
+          resizeCanvas(
+            board.width + 2 * BOARD_MARGIN,
+            board.height + 2 * BOARD_MARGIN + 2 * board.cell_side
+          )
+        }
+
+        /* The draw function is native to p5.js and is used to give precise drawing instructions on the canvas */
+
+        function draw() {
+          if (gameStarted) {
+            clear()
+            drawScore()
+            board.draw()
+            tetromino.draw()
+            keyEventTetris()
+          }
+        }
+
+        function drawScore() {
+          push()
+          textSize(20)
+          strokeWeight(2)
+          stroke('black')
+          fill('white')
+          text(
+            'Lines: ' + done_lines,
+            board.position.x,
+            board.position.y - board.cell_side / 2
+          )
+          if (done_lines >= current_level * lines_per_level) {
+            current_level++
+            increaseDifficulty()
+          }
+          text(
+            'Level: ' + current_level,
+            board.position.y + 55,
+            board.position.y - board.cell_side / 2
+          )
+
+          pop()
+        }
+
+        function increaseDifficulty() {
+          console.log('increased difficulty', current_level, fall_interval)
+          fall_interval -= 40
+          clearInterval(fallIntervalId)
+          fallIntervalId = setInterval(() => {
+            if (millis() - fall_regulator < fall_interval) {
+              return
+            }
+            fall_regulator = millis()
+            tetromino.moveDown()
+          }, fall_interval)
+
+          loadLevelMusic(current_level)
+        }
+
+        function keyEventTetris() {
+          if (millis() - key_speed_regulator < key_speed_regulator_limit) {
+            return
+          }
+          key_speed_regulator_limit = 100
+          key_speed_regulator = millis()
+
+          if (keyIsDown(LEFT_ARROW)) {
+            tetromino.moveLeft()
+            fall_regulator = millis()
+          }
+          if (keyIsDown(RIGHT_ARROW)) {
+            tetromino.moveRight()
+            fall_regulator = millis()
+          }
+          if (keyIsDown(DOWN_ARROW)) {
+            tetromino.moveDown()
+            fall_regulator = millis()
+          }
+          if (keyIsDown(UP_ARROW)) {
+            key_speed_regulator_limit = 150
+            tetromino.turn()
+            fall_regulator = millis()
+          }
+          if (keyIsDown(32)) {
+            key_speed_regulator_limit = 200
+            tetromino.putInTheBackground()
+            fall_regulator = millis()
+          }
+        }
+      </script>
+    </div>
+  </body>
+</html>
