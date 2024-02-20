@@ -1,3 +1,5 @@
+![Tetris Logo](https://www.svgrepo.com/show/283953/tetris.svg)
+
 # Tetris Game
 
 ## Instructions
