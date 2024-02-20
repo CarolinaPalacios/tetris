@@ -59,15 +59,15 @@ class Board {
 
   findHorizontalLinesToClear() {
     const lines = []
-    for (let row = this.rows; row >= 0; row--) {
-      let add = true
+    for (let row = 0; row < this.rows; row++) {
+      let isLineComplete = true
       for (let column = 0; column < this.columns; column++) {
         if (!this.storedMinoes[column][row]) {
-          add = false
+          isLineComplete = false
           break
         }
       }
-      if (add) {
+      if (isLineComplete) {
         const stageClearAudio = new Audio('./public/stage-clear.mp3')
         stageClearAudio.volume = 0.05
         stageClearAudio.play()
@@ -80,14 +80,13 @@ class Board {
   clearLines(lines) {
     done_lines += lines.length
     for (const line of lines) {
-      for (let row = line; row >= 0; row--) {
+      for (let r = line; r > 0; r--) {
         for (let column = 0; column < this.columns; column++) {
-          if (row === 0) {
-            this.storedMinoes[column][row] = ''
-            continue
-          }
-          this.storedMinoes[column][row] = this.storedMinoes[column][row - 1]
+          this.storedMinoes[column][r] = this.storedMinoes[column][r - 1]
         }
+      }
+      for (let column = 0; column < this.columns; column++) {
+        this.storedMinoes[column][0] = ''
       }
     }
   }
