@@ -68,7 +68,7 @@ class Board {
         }
       }
       if (isLineComplete) {
-        const stageClearAudio = new Audio('./public/stage-clear.mp3')
+        const stageClearAudio = new Audio('../public/stage-clear.mp3')
         stageClearAudio.volume = 0.05
         stageClearAudio.play()
         lines.push(row)

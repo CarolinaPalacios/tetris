@@ -30,22 +30,22 @@
           justify-content: center;
           align-items: center;
           text-align: center;
-          margin-left: 20%;
+          margin-left: 15%;
           font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
             Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
             sans-serif;
         }
 
         h1 {
-          font-size: 40px;
+          font-size: 50px;
           margin-top: -10px;
           color: rgb(227, 227, 227);
           text-shadow: rgb(143, 143, 143) 0px 2px 5px;
         }
 
         #startButton {
-          font-size: 20px;
-          padding: 10px;
+          font-size: 25px;
+          padding: 15px;
           cursor: pointer;
           color: rgb(227, 227, 227);
           font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
@@ -102,7 +102,7 @@
         let audio
 
         window.onload = function () {
-          audio = new window.Audio('./public/start.mp3')
+          audio = new window.Audio('../public/start.mp3')
           audio.volume = 0.1
           audio.loop = true
           audio.play()
@@ -115,23 +115,23 @@
 
           switch (true) {
             case level >= 1 && level <= 5:
-              audioSrc = './public/tetris.mp3'
+              audioSrc = '../public/tetris.mp3'
               break
             case level >= 6 && level <= 10:
-              audioSrc = './public/level5.mp3'
+              audioSrc = '../public/level5.mp3'
               break
             case level >= 11 && level <= 20:
-              audioSrc = './public/level10.mp3'
+              audioSrc = '../public/level10.mp3'
               break
             case level >= 21:
-              audioSrc = './public/danger.mp3'
+              audioSrc = '../public/danger.mp3'
               break
             default:
-              audioSrc = './public/tetris.mp3'
+              audioSrc = '../public/tetris.mp3'
           }
 
           if (currentAudioSrc !== audioSrc) {
-            if (!gameStarted) audioSrc = './public/start.mp3'
+            if (!gameStarted) audioSrc = '../public/start.mp3'
             audio.src = audioSrc
             audio.play()
             currentAudioSrc = audioSrc
@@ -190,7 +190,7 @@
         /* The setup function is native to p5.js and is used to adjust the initial properties of our objects and variables */
 
         function setup() {
-          createCanvas(900, 600)
+          createCanvas(1500, 1000)
           board = new Board()
           createTetrominoBaseMapping()
           tetromino = new Tetromino()
