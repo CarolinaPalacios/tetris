@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://www.svgrepo.com/show/283953/tetris.svg" alt="Tetris Logo" width="100" height="100" style="margin: auto;">
+  <img src="https://www.svgrepo.com/show/283953/tetris.svg" alt="Tetris Logo" width="250" height="250" style="margin: auto;">
 </p>
 
 # Tetris Game
