@@ -1,4 +1,4 @@
-![Tetris Logo](https://www.svgrepo.com/show/283953/tetris.svg)
+<img src="https://www.svgrepo.com/show/283953/tetris.svg" alt="Tetris Logo" width="100" height="100">
 
 # Tetris Game
 
