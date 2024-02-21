@@ -102,7 +102,7 @@
         let audio
 
         window.onload = function () {
-          audio = new window.Audio('start.mp3')
+          audio = new window.Audio('./assets/start.mp3')
 
           audio.volume = 0.1
           audio.loop = true
@@ -116,23 +116,23 @@
 
           switch (true) {
             case level >= 1 && level <= 5:
-              audioSrc = 'tetris.mp3'
+              audioSrc = './assets/tetris.mp3'
               break
             case level >= 6 && level <= 10:
-              audioSrc = 'level5.mp3'
+              audioSrc = './assets/level5.mp3'
               break
             case level >= 11 && level <= 20:
-              audioSrc = 'level10.mp3'
+              audioSrc = './assets/level10.mp3'
               break
             case level >= 21:
-              audioSrc = 'danger.mp3'
+              audioSrc = './assets/danger.mp3'
               break
             default:
-              audioSrc = 'tetris.mp3'
+              audioSrc = './assets/tetris.mp3'
           }
 
           if (currentAudioSrc !== audioSrc) {
-            if (!gameStarted) audioSrc = 'start.mp3'
+            if (!gameStarted) audioSrc = './assets/start.mp3'
             audio.src = audioSrc
             audio.play()
             currentAudioSrc = audioSrc
